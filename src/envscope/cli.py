@@ -10,6 +10,7 @@ from typing import Dict, List, Optional
 from . import __version__
 from .checker import Issue, Report, check
 from .parser import parse_env, read_env
+from .sarif import write_sarif
 from .schema import Spec, SchemaError, auto_secret, guess_type, load_schema
 
 DEFAULT_ENV = ".env"
@@ -45,6 +46,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     check_parser.add_argument("--strict", action="store_true", help="treat warnings as errors")
     check_parser.add_argument("--json", action="store_true", help="machine-readable output")
+    check_parser.add_argument(
+        "--sarif",
+        default=None,
+        metavar="PATH",
+        help="also write a SARIF 2.1.0 report for GitHub code scanning",
+    )
     check_parser.add_argument("--quiet", action="store_true", help="print only the summary")
     check_parser.add_argument("--no-color", action="store_true", help="disable ANSI colours")
     check_parser.set_defaults(func=cmd_check)
@@ -132,6 +139,11 @@ def cmd_check(args: argparse.Namespace) -> int:
     example = read_env(example_path)
     env = read_env(env_path)
     report = check(example, env, schema, strict=args.strict)
+
+    if args.sarif:
+        sarif_path = write_sarif(Path(args.sarif), report, args.env, __version__)
+        if not args.json and not args.quiet:
+            print(f"wrote SARIF report to {sarif_path}")
 
     if args.json:
         print(_json_report(report))

@@ -1,21 +1,16 @@
-# Changelog
+CHANGELOG
 
-All notable changes to this project are documented here.
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
-and this project adheres to [Semantic Versioning](https://semver.org/).
+v0.1.1 (2026-11-20)
+- Added SARIF 2.1.0 export: `envscope check --sarif PATH`.
+  Findings map to one rule per issue code with error/warning levels and dotenv
+  line numbers, so GitHub code scanning can annotate them inline.
+- Added `src/envscope/sarif.py` plus 8 tests covering document shape, rule indexes,
+  line/uri attribution and the guarantee that secret values never reach the log.
+- CI now produces `envscope.sarif` and asserts it is valid JSON with a `runs` array.
+- Docs: corrected the install URL (the repo lives at hamids-ai-automations/envscope),
+  documented the SARIF workflow, updated the test count to 42.
 
-## [0.1.0] - 2026-10-30
-
-### Added
-
-- `envscope check`: compare `.env` with `.env.example` and an optional JSON schema.
-- Drift detection for missing, extra, empty and duplicate keys.
-- Type validation for `string`, `int`, `float`, `bool`, `port`, `url`, `email`.
-- `pattern` and `choices` constraints, with `required` and `secret` flags.
-- `--strict`, `--json`, `--quiet` and `--no-color` options with stable exit codes.
-- `envscope init`: generate a schema from `.env.example` by guessing types.
-- `envscope version`.
-- Unit and end-to-end tests (34 tests) using only the standard library.
-- GitHub Actions CI on Python 3.11, 3.12 and 3.13.
-
-[0.1.0]: https://github.com/NicolaRebecca/envscope/releases/tag/v0.1.0
+v0.1.0 (2026-10-30)
+- Added envscope check, drift detection, type validation, pattern/choices constraints,
+  --strict/--json/--quiet/--no-color, envscope init, envscope version, unit/end-to-end
+  tests (34 tests), GitHub Actions CI on Python 3.11/3.12/3.13.

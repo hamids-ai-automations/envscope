@@ -36,3 +36,13 @@ jobs:
         run: |
           envscope version
           envscope init --example examples/.env.example --out /tmp/envscope-ci.json
+      - name: SARIF smoke test
+        run: |
+          (cd examples && PYTHONPATH=../src python -m envscope check --example .env.example --env .env --schema envscope.json --sarif /tmp/envscope.sarif) || true
+          python - <<'PY'
+          import json
+          data = json.load(open("/tmp/envscope.sarif"))
+          assert data["version"] == "2.1.0"
+          assert data["runs"] and "results" in data["runs"][0]
+          print("SARIF ok:", len(data["runs"][0]["results"]), "results")
+          PY
